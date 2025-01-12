@@ -9,17 +9,20 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @State private var showAlert = false
+    @State private var text: String = ""
+    
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query private var items: [NameList]
 
     var body: some View {
         NavigationSplitView {
             List {
                 ForEach(items) { item in
                     NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+                        DetailView()
                     } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                        Text(item.title)
                     }
                 }
                 .onDelete(perform: deleteItems)
@@ -29,7 +32,9 @@ struct ContentView: View {
                     EditButton()
                 }
                 ToolbarItem {
-                    Button(action: addItem) {
+                    Button(action: {
+                        showAlert = true
+                    }) {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
@@ -37,11 +42,29 @@ struct ContentView: View {
         } detail: {
             Text("Select an item")
         }
+        .alert(
+            Text("Add a Name List"),
+            isPresented: $showAlert
+        ) {
+            Button("Cancel", role: .cancel) {
+                // Handle the acknowledgement.
+            }
+            Button("OK") {
+                addItem()
+                text = ""
+                // Handle the acknowledgement.
+            }
+            TextField("Title", text: $text)
+                .textContentType(.name)
+        } message: {
+           Text("Enter a list title below.")
+        }
     }
+    
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
+            let newItem = NameList(title: text, nameList: [Name]())
             modelContext.insert(newItem)
         }
     }
@@ -57,5 +80,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: NameList.self, inMemory: true)
 }
