@@ -11,6 +11,9 @@ import SwiftData
 struct DetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var nameList: [Name]
+    
+    @State private var showAlert = false
+    @State private var text: String = ""
 
     var body: some View {
             List {
@@ -25,17 +28,34 @@ struct DetailView: View {
                 }
                 ToolbarItem {
                     Button(action: {
-                        addItem()
+                        showAlert = true
                     }) {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
             }
+            .alert(
+                Text("Add a Name"),
+                isPresented: $showAlert
+            ) {
+                Button("Cancel", role: .cancel) {
+                    // Handle the acknowledgement.
+                }
+                Button("OK") {
+                    addItem()
+                    text = ""
+                    // Handle the acknowledgement.
+                }
+                TextField("Name", text: $text)
+                    .textContentType(.name)
+            } message: {
+               Text("Enter a name below.")
+            }
         }
     
     private func addItem() {
         withAnimation {
-            let newItem = Name(firstName: "Name")
+            let newItem = Name(firstName: text)
             modelContext.insert(newItem)
         }
     }
