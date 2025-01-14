@@ -9,6 +9,8 @@ import SwiftData
 import SwiftUI
 
 struct EditNameListView: View {
+    @Environment(\.modelContext) var modelContext
+
     @Bindable var nameList: NameList
 
     @State private var newName = ""
@@ -23,6 +25,7 @@ struct EditNameListView: View {
                 ForEach(nameList.names) { name in
                     Text(name.firstName)
                 }
+                .onDelete(perform: deleteName)
                 HStack {
                     TextField("Add to \(nameList.title)", text: $newName)
                     //add name to the list when enter is pressed
@@ -51,6 +54,14 @@ struct EditNameListView: View {
     func selectName() {
         let index = Int.random(in: 0..<nameList.names.count)
         randomName = nameList.names[index].firstName
+    }
+    
+    func deleteName(_ indexSet: IndexSet) {
+        for index in indexSet {
+            let name = nameList.names[index]
+            nameList.names.remove(at: index)
+            modelContext.delete(name)
+        }
     }
 }
 

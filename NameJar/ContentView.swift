@@ -21,9 +21,9 @@ struct ContentView: View {
             NameListingView(searchString: searchText)
                 .searchable(text: $searchText)
                 .navigationTitle("Name Jar")
-                .navigationDestination(
-                    for: NameList.self, destination: EditNameListView.init
-                )
+                .navigationDestination(for: NameList.self) { nameList in
+                    EditNameListView(modelContext: _modelContext, nameList: nameList)
+                }
                 .toolbar {
                     Button("Add List", systemImage: "plus", action: addItem)
                 }

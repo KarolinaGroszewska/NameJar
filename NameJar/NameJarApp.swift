@@ -28,5 +28,6 @@ struct NameJarApp: App {
             ContentView()
         }
         .modelContainer(sharedModelContainer)
+        .modelContext(ModelContext(sharedModelContainer))
     }
 }
