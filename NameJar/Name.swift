@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Name {
+class Name {
     var firstName: String
     
     init(firstName: String) {

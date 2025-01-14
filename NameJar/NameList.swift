@@ -11,10 +11,9 @@ import SwiftData
 @Model
 final class NameList {
     var title: String
-    var nameList: [Name]
+    @Relationship(deleteRule: .cascade) var names = [Name]()
     
-    init(title: String, nameList: [Name]) {
+    init(title: String = "") {
         self.title = title
-        self.nameList = nameList
     }
 }
